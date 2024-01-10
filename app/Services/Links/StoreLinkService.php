@@ -20,15 +20,15 @@ class StoreLinkService
      */
     public function store(string $url): Link
     {
-        $link = Link::where('url', $url)->first();
+        $link = Link::query()->where('url', $url)->first();
+
         if ($link) {
             return $link;
         }
 
-        // todo: uncomment
-        // if (! $this->urlCheckService->isUrlSafe($url)) {
-        //     throw new LinkUnsafeException('The provided URL is unsafe');
-        // }
+        if (!$this->urlCheckService->isUrlSafe($url)) {
+            throw new LinkUnsafeException('The provided URL is unsafe');
+        }
 
         return Link::create([
             'hash' => $this->linkHashService->generateValidHash(),
